@@ -155,6 +155,60 @@ function CreatePromotionList(data)
 	Tbody.appendChild(TrChild);
 }
 
+function CreateGeoList(locations)
+{	
+	for(i=0; i<locations.length; i++){
+		var TrChild=document.createElement('tr');
+		TrChild.id="geo_id_" + i;
+		
+		var TdId=document.createElement('td');
+	    TdId.setAttribute('class',"center");
+		TdId.innerHTML=String.fromCharCode(65+i);
+		TrChild.appendChild(TdId);
+		
+		var TdPromTitle=document.createElement('td');
+	    TdPromTitle.setAttribute('class',"center");
+		TdPromTitle.innerHTML="NAME";
+		TrChild.appendChild(TdPromTitle);
+			
+		var TdPromTitle=document.createElement('td');
+	    TdPromTitle.setAttribute('class',"center");
+		TdPromTitle.innerHTML=locations[i]['name'];
+		TrChild.appendChild(TdPromTitle);
+
+		var TdPromTitle=document.createElement('td');
+	    TdPromTitle.setAttribute('class',"center");
+		TdPromTitle.innerHTML="CONTACT";
+		TrChild.appendChild(TdPromTitle);
+
+		var TdPromTitle=document.createElement('td');
+	    TdPromTitle.setAttribute('class',"center");
+		TdPromTitle.innerHTML="DISTANCE";
+		TrChild.appendChild(TdPromTitle);		
+			
+		var TdPromOps=document.createElement('td');
+	    TdPromOps.setAttribute('class',"center promotion_ops");
+	    
+	    var aEdit=document.createElement('a');
+	    aEdit.setAttribute('class',"btn btn-info");
+	    aEdit.setAttribute('href',"#");
+	    aEdit.setAttribute('onclick',"editProm(" + i +")");
+	    var iEditIcon=document.createElement('i');
+	    iEditIcon.setAttribute('class',"icon-edit icon-white");
+	    aEdit.appendChild(iEditIcon);
+	    var iEdit=document.createElement('i');
+	    iEdit.innerHTML=" 编辑";
+	    aEdit.appendChild(iEdit);
+	    
+	    TdPromOps.appendChild(aEdit);
+	    
+		TrChild.appendChild(TdPromOps);
+		
+		var Tbody = document.getElementById("geo_tbody");
+		Tbody.appendChild(TrChild);
+	}
+}
+
 function CreateMemberListDemo(data)
 {
 	

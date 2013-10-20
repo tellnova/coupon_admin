@@ -9,6 +9,7 @@
 	<meta name="format-detection" content="telephone=no">
 	
 	<script src="./js/nova.build.list.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=CE7bd55871d0a587aeea857aabdece03"></script>
 	
 	<!-- The styles -->
 	<link id="bs-css" href="css/bootstrap-cerulean.css" rel="stylesheet">
@@ -102,157 +103,44 @@
 			<div class="row-fluid sortable" style="padding-top: 17px;">
 				<div class="box span12">
 					<div class="well" style="min-height: 5px; height: 5px; border-radius: 0;" data-original-title >
-						<h4 style="margin-top: -5px;"><i class="icon-edit"></i> 发布活动</h4>
+						<h4 style="margin-top: -5px;"><i class=" icon-map-marker"></i> 锁匠定位</h4>
 					</div>
 					<div class="box-content">
-						<form class="form-horizontal" action="promotion_release.php" method="post">
-						  <fieldset>
-<!-- 							<legend>填写活动信息</legend> -->
 
-							<div class="alert alert-success" id="promotion_released" style="display: none;">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<h4 class="alert-heading">活动发布成功！</h4>
-								<p>此活动发布成功，已发布的活动显示在本页的活动列表中，您可以对已发布的活动浏览修改或者删除。</p>
-							</div>						  
-						  
-							<div class="alert alert-error" id="promotion_alert" style="display: none;">
-								<button type="button" class="close" data-dismiss="alert">×</button>
-								<h4 class="alert-heading">活动发布失败！</h4>
-								<p>您发布的活动已达到目前的上限。如果想发布新活动请先删除旧活动，如果想发布更多活动请联系我们。</p>
-							</div>						  
-						  
-							<div class="control-group">
-							  <label class="control-label" for="pro_title">活动标题：</label>
-							  <div class="controls">
-								<input autofocus type="text" class="input-medium" id="pro_title" name="pro_title" value="优惠活动">
-							  </div>
-							</div>							
-							        
-							<div class="control-group">
-							  <label class="control-label" for="pro_details">活动详情：</label>
-							  <div class="controls">
-								<textarea type="text" class="input-xxlarge" id="pro_details" name="pro_details" style="min-height: 200px;"></textarea>
-							  </div>
-							</div>
-							
-							<div class="control-group">
-							  <label class="control-label" for="date01">起始日期：</label>
-							  <div class="controls">
-								<input type="text" class="input-medium datepicker" id="pro_start" name="pro_start">
-							  </div>
-							</div>
-							
-							<div class="control-group">
-							  <label class="control-label" for="date02">截至日期：</label>
-							  <div class="controls">
-								<input type="text" class="input-medium datepicker" id="pro_end" name="pro_end">
-							  </div>
-							</div>								
-							
-							<div class="form-actions">
-							  <button type="submit" class="btn btn-primary">发布活动</button>
-							  <button type="reset" class="btn" style="margin-left: 5px;">取消</button>
-							</div>
+						<form class="form-horizontal" action="" onkeydown="if(event.keyCode==13){return false;}">
+							<fieldset>
+
+								<div class="control-group">
+									<label class="control-label" for="pro_details">用户位置：</label>
+									<input autofocus type="text" class="input-xlarge" id="user_locate" name="user_locate">
+									<button type="button" class="btn btn-primary" style="margin-left:15px;" onclick="searchByGeoName();">查询</button>
+								</div>
+
+								<div id="map_container" style="margin:0 auto;width: 900px; height: 550px; border: 3px solid gray; 
+										overflow:hidden;">
+						        </div>
+
+								<table id="geo_table" class="table table-striped table-bordered bootstrap-datatable datatable" style="opacity:0;">
+									<thead>
+									  <tr>
+									      <th>序号</th>
+										  <th>锁匠</th>
+										  <th>锁匠位置</th>
+										  <th>联系方式</th>
+										  <th>距离客户</th>
+										  <th>操作</th>
+									  </tr>
+									</thead>   
+									<tbody id="geo_tbody">
+									</tbody>
+							  	</table> 
+
 						  </fieldset>
-						</form>   
-
+						</form>
 					</div>
 				</div><!--/span-->
 
 			</div><!--/row-->
-			
-			
-			<div class="row-fluid sortable" style="padding-top: 17px;">		
-				<div class="box span12">
-					<div class="well" style="min-height: 5px; height: 5px; border-radius: 0;" data-original-title >
-						<h4 style="margin-top: -5px;"><i class="icon-th-list"></i> 活动列表</h4>
-					</div>
-					<div class="box-content">
-					
-						<div class="alert alert-success" id="promotion_deleted" style="display: none;">
-							<button type="button" class="close" data-dismiss="alert">×</button>
-							<h4 class="alert-heading">删除活动成功！</h4>
-							<br>
-							<p>改活动已经被删除，您可以发布新的活动。</p>
-						</div>					
-						
-						<div class="alert alert-success" id="promotion_edited" style="display: none;">
-							<button type="button" class="close" data-dismiss="alert">×</button>
-							<h4 class="alert-heading">活动更新成功！</h4>
-							<p>此活动更新成功，已发布的活动显示在本页的活动列表中，您可以对已发布的活动浏览修改或者删除。</p>
-						</div>	
-
-						<table class="table table-striped table-bordered bootstrap-datatable datatable">
-						  <thead>
-							  <tr>
-							      <th>序号</th>
-								  <th>活动标题</th>
-								  <th>活动内容</th>
-								  <th>起始日期</th>
-								  <th>截止日期</th>
-								  <th>操作</th>
-							  </tr>
-						  </thead>   
-						  <tbody id="promotion_tbody">
-						  </tbody>
-					  	</table>  
-
-						<div class="row-fluid sortable" style="display:none;" id="promotion_edit_container">
-							<div class="box span12">
-								<div class="well" style="min-height: 5px; height: 5px; border-radius: 0;" data-original-title >
-									<h4 style="margin-top: -5px;"><i class="icon-edit"></i> 编辑活动</h4>
-								</div>
-								<div class="box-content">
-									<form class="form-horizontal" action="promotion_update.php" method="post">
-									  <fieldset>					  					  
-									  
-										<div class="control-group">
-										  <label class="control-label" for="pro_title_edit">活动标题：</label>
-										  <div class="controls">
-											<input autofocus type="text" class="input-medium" id="pro_title_edit" name="pro_title_edit">
-										  </div>
-										</div>							
-										        
-										<div class="control-group">
-										  <label class="control-label" for="pro_details_edit">活动详情：</label>
-										  <div class="controls">
-											<textarea type="text" class="input-xxlarge" id="pro_details_edit" name="pro_details_edit" style="min-height: 200px;"></textarea>
-										  </div>
-										</div>
-										
-										<div class="control-group">
-										  <label class="control-label" for="date03">起始日期：</label>
-										  <div class="controls">
-											<input type="text" class="input-medium datepicker" id="pro_start_edit" name="pro_start_edit">
-										  </div>
-										</div>
-										
-										<div class="control-group">
-										  <label class="control-label" for="date04">截至日期：</label>
-										  <div class="controls">
-											<input type="text" class="input-medium datepicker" id="pro_end_edit" name="pro_end_edit">
-										  </div>
-										</div>								
-										
-										<div class="form-actions">
-										  <button type="submit" class="btn btn-primary">保存</button>
-										  <button type="button" class="btn" style="margin-left: 5px;" onclick="hideEdit()">取消</button>
-										</div>
-
-									  </fieldset>
-									</form>   
-
-								</div>
-							</div><!--/span-->
-
-						</div><!--/row-->
-
-
-					</div>
-				</div><!--/span-->
-			
-			</div><!--/row-->					
-			
 
 		<?php if(!isset($no_visible_elements) || !$no_visible_elements)	{ ?>
 			<!-- content ends -->
@@ -331,8 +219,85 @@
 			window.location.href = closeIt() + "#promotion_edited";
 		</script>
 	<?php } ?>
-	
-	<script type="text/javascript" src="get_promotions.php"></script>
+
+	<script type="text/javascript">
+	    var xmlHttp;
+	    var map = new BMap.Map("map_container");
+	    map.centerAndZoom("上海市", 13);
+	    map.enableScrollWheelZoom();    //启用滚轮放大缩小，默认禁用
+	    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+
+	    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+	    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+	    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+
+	    var localSearch = new BMap.LocalSearch(map);
+	    localSearch.enableAutoViewport(); //允许自动调节窗体大小
+
+	    function searchByGeoName() {
+	        map.clearOverlays();
+	        var keyword = document.getElementById("user_locate").value;
+	        localSearch.setSearchCompleteCallback(function (searchResult) {
+	            var poi = searchResult.getPoi(0);
+	            map.centerAndZoom(poi.point, 13);
+
+	            near(poi.point.lat, poi.point.lng);	//Search in database
+
+	            var tarIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {  
+	                        offset: new BMap.Size(10, 25),
+	                        imageOffset: new BMap.Size(0, 0 - 10*25)
+	                });
+            	var marker = new BMap.Marker(new BMap.Point(poi.point.lng, poi.point.lat),{icon:tarIcon});	            
+	            map.addOverlay(marker);
+	            var content = "经度：" + poi.point.lng + "<br/>纬度：" + poi.point.lat;
+	            var infoWindow = new BMap.InfoWindow("<p style='font-size:14px;'>" + content + "</p>");
+	            marker.addEventListener("click", function () { this.openInfoWindow(infoWindow); });
+	            marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+	        });
+
+	        localSearch.search(keyword);
+	    } 
+
+	    function targetsFound() 
+	    { 
+	        if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	        {
+	            var i;
+	            var locations = eval(xmlHttp.responseText);
+	            var content = new Array();
+	            var markers = [];
+	            for(i=0; i<locations.length; i++){
+	                var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {  
+	                        offset: new BMap.Size(10, 25),
+	                        imageOffset: new BMap.Size(0, 0 - i*25)
+	                    });
+	                var marker = new BMap.Marker(new BMap.Point(locations[i]['lng'], locations[i]['lat']),{icon:myIcon});
+	                markers.push(marker);
+	                map.addOverlay(marker);
+	                content[i] = "锁匠：" + locations[i]['name'] + "<br/>经度：" + locations[i]['lng'] + "<br/>纬度：" + locations[i]['lat'];
+	                (function(){
+	                    var index = i;
+	                    markers[i].addEventListener('click', function(){
+	                        this.openInfoWindow(new BMap.InfoWindow("<p style='font-size:14px;'>" +  content[index] + "</p>"));
+	                    });    
+	                })();
+	            }
+	            document.getElementById("geo_table").setAttribute('style',"margin-top:35px; opacity:1;");
+	            CreateGeoList(locations);
+	        } 
+	    }
+
+	    function near(lat,lng)
+	    { 
+	        xmlHttp=new XMLHttpRequest();
+	        var url="./geo.php";
+	        url=url+"?lat="+lat+"&lng="+lng;
+	        xmlHttp.onreadystatechange=targetsFound;
+	        xmlHttp.open("GET",url,true);
+	        xmlHttp.send(null);
+	        return true;
+	    }
+	</script>
 	
 	<script type="text/javascript">
 
